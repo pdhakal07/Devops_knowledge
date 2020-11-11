@@ -1,4 +1,4 @@
-#*Intalling Tomcat in AMZON linux 2 with enabling manager App( Tomcat GUI)*
+##**Intalling Tomcat in AMZON linux 2 with Systemctl and  enabling manager App( Tomcat GUI)**
 
 
 sudo yum install java-1.8.0-openjdk.x86_64 -y
@@ -8,7 +8,7 @@ wget https://mirrors.ocf.berkeley.edu/apache/tomcat/tomcat-8/v8.5.59/bin/apache-
 sudo tar -xvf apache-tomcat-8.5.59.tar.gz -C /opt/
 
 
-Installing Tomcat as Systemctl service 
+###**Installing Tomcat as Systemctl service **
 
 sudo groupadd tomcat
 
@@ -59,7 +59,7 @@ sudo systemctl daemon-reload
 sudo systemctl start tomcat
 
 
-Enabling manager-app(gui)
+###**Enabling manager-app(gui)**
 
 Shutdown Tomcat Servive
 
