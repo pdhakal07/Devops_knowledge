@@ -1,0 +1,85 @@
+#*Intalling Tomcat in AMZON linux 2 with enabling manager App( Tomcat GUI)*
+
+
+sudo yum install java-1.8.0-openjdk.x86_64 -y
+
+wget https://mirrors.ocf.berkeley.edu/apache/tomcat/tomcat-8/v8.5.59/bin/apache-tomcat-8.5.59.tar.gz
+
+sudo tar -xvf apache-tomcat-8.5.59.tar.gz -C /opt/
+
+
+Installing Tomcat as Systemctl service 
+
+sudo groupadd tomcat
+
+sudo useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat
+
+cd /opt/tomcat
+
+sudo chmod -R g+r conf
+sudo chmod g+x conf
+
+sudo chown -R tomcat webapps/ work/ temp/ logs/
+
+sudo vi /etc/systemd/system/tomcat.service
+ 
+Paste the following 
+
+# Systemd unit file for tomcat
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME=/usr/lib/jvm/jre
+Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/opt/tomcat
+Environment=CATALINA_BASE=/opt/tomcat
+Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+User=tomcat
+Group=tomcat
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+Save and Exit 
+
+
+sudo systemctl daemon-reload
+sudo systemctl start tomcat
+
+
+Enabling manager-app(gui)
+
+Shutdown Tomcat Servive
+
+sudo nano /usr/share/tomcat/webapps/manager/META-INF/context.xml
+
+Replace the following line inside the <context> tag:
+
+<Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
+
+sudo nano /usr/share/tomcat/conf/tomcat-users.xml
+
+Add the following lines inside <tomcat-users> tag:
+
+<role rolename="admin"/> 
+<role rolename="admin-gui"/> 
+<role rolename="admin-script"/> 
+<role rolename="manager"/> 
+<role rolename="manager-gui"/> 
+<role rolename="manager-script"/> 
+<role rolename="manager-jmx"/> 
+<role rolename="manager-status"/> 
+<user name="admin" password="adminadmin" roles="admin,manager,admin-gui,admin-script,manager-gui,manager-script,manager-jmx,manager-status" />
+
